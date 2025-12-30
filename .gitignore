@@ -1,0 +1,32 @@
+# Jupyter specific files
+.ipynb_checkpoints/
+.jupyter/
+.vscode/ # If using VS Code for development alongside JupyterLab
+.environment/ # If you have a virtual environment folder
+
+# Python specific files
+__pycache__/
+*.pyc
+
+/pitch_raw
+/pitch_processed
+/final_processed
+/old
+
+/web/public
+
+# Data files (if not intended for version control)
+*.csv
+*.json
+*.parquet
+*.zip
+#*.txt
+#*.log
+
+# Environment variables (if present)
+#.env
+
+# Output files that can be regenerated
+#*.hdf5
+#*.pkl
+#*.parquet

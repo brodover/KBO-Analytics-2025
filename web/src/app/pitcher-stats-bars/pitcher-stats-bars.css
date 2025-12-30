@@ -1,0 +1,57 @@
+/* Wrapper to hold the bars and the optional 'Scaled' indicator */
+.pitch-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.scaling-indicator {
+  color: #888;
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+}
+
+.pitch-bar-container {
+  display: flex;
+  flex-direction: row;
+  height: 18px;
+  align-items: center;
+  flex-wrap: nowrap; 
+  overflow: hidden;
+  
+  /* Setting a max width to constrain the visual space */
+  max-width: 300px;
+}
+
+/* Style for a SINGLE bar (1-9 pitches, continuous block) */
+.bar-single {
+  /* Width is now set dynamically via [style.width.px] in the HTML */
+  height: 100%;
+  box-sizing: border-box;
+  /* Keep the border for separation from the next segment */
+  border-right: 1px solid rgba(0, 0, 0, 0.1); 
+}
+
+/* Style for a GROUP bar (10+ pitches, continuous block) */
+.bar-group {
+  /* Width is set dynamically via [style.width.px] in the HTML */
+  height: 100%;
+  box-sizing: border-box;
+  /* Thicker border to distinguish the group blocks */
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  /* No margin to ensure blocks abut each other */
+  margin-right: 0; 
+}
+
+/* --- Color Definitions --- */
+.bar-contact {
+  background-color: rgb(84, 105, 230);
+}
+.bar-whiff {
+  background-color: palevioletred;
+}
+.bar-remaining {
+  background-color: lightgrey;
+}

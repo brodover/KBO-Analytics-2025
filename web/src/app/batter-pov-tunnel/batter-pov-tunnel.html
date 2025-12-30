@@ -1,0 +1,31 @@
+<h2>⚾ Batter POV Tunnel Visualization</h2>
+
+<div class="controls">
+    <select [(ngModel)]="selectedTeamCode" (change)="onTeamSelect(selectedTeamCode)">
+        <option [ngValue]="null" disabled>Select Team</option> 
+        <option *ngFor="let team of (groupedPitchers$ | async)" [ngValue]="team.teamCode">
+            {{ team.teamCode }}
+        </option>
+    </select>
+    <br>
+    <select [(ngModel)]="selectedPitcherId" (change)="onPitcherSelect(selectedPitcherId)" 
+            [disabled]="!selectedTeamCode">
+        <option [ngValue]="null" disabled>Select Pitcher</option>
+        <option *ngFor="let pitcher of (availablePitchers$ | async)" [ngValue]="pitcher.id">
+            {{ pitcher.name }}
+        </option>
+    </select>
+</div>
+
+<hr>
+
+<div *ngIf="chartData" class="chart-container">
+    <h2>Trajectory Visualization</h2>
+    <app-trajectory-chart 
+        [chartData]="chartData">
+    </app-trajectory-chart>
+</div>
+
+<div *ngIf="!chartData && selectedPitcherId" class="message">
+    <p>Select two pitch types to view the tunnel visualization.</p>
+</div>
