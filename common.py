@@ -29,5 +29,6 @@ PITCH_MISS_FEATURES = ['plate_x_ft', 'plate_z_ft', 'pitch_speed_kph', 'ax', 'az'
 SWING_CODES = {'H', 'S', 'V', 'F', 'W'}
 CONTACT_CODES = {'H', 'F', 'W'}
 WHIFF_CODES = {'S', 'V'}
+FOUL_CODES = {'F', 'W'}
 NO_SWING_CODES = {'T', 'B'}
 #OUT_CODES = {'S', 'V', 'T'}
