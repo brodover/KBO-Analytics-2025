@@ -32,3 +32,28 @@ WHIFF_CODES = {'S', 'V'}
 FOUL_CODES = {'F', 'W'}
 NO_SWING_CODES = {'T', 'B'}
 #OUT_CODES = {'S', 'V', 'T'}
+
+
+class Colors:
+    RED = '\033[91m'       # High intensity Red
+    YELLOW = '\033[93m'    # High intensity Yellow
+    ENDC = '\033[0m'       # Reset to default color
+    
+def log_error(message):
+    print(f"{Colors.RED}CRITICAL ERROR: {message}{Colors.ENDC}")
+
+def log_warning(message):
+    print(f"{Colors.YELLOW}WARNING: {message}{Colors.ENDC}")
+
+def extract_team_codes(game_id):
+    """
+    Extracts the 2-character away and home team codes from the game_id string.
+    Example: '20250930LTHH02025' -> Away: 'LT', Home: 'HH'
+    """
+    if len(game_id) < 12:
+        return 'N/A', 'N/A' # Handle unexpected format
+        
+    away_code = game_id[8:10]
+    home_code = game_id[10:12]
+    
+    return away_code, home_code
