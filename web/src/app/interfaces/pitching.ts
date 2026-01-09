@@ -74,3 +74,27 @@ export interface PitcherTeam {
   pitchers: { id: number; name: string }[];
 }
 
+// models/player-scouting.model.ts
+
+export interface PlayerMetrics {
+  decision_score: number;
+  swing_rate: number;
+  trap_swing_rate: number;
+  //trap_foul_rate?: number;
+}
+
+export interface YearData {
+  metrics: PlayerMetrics;
+  count_discipline: { [count: string]: number }; // e.g., "0-0": 0.85
+}
+
+
+export interface PlayerProfile {
+  [year: string]: YearData; // "Career", "2024", etc.
+}
+
+export interface ScoutingData {
+  [playerName: string]: {
+    [year: string]: YearData;
+  };
+}

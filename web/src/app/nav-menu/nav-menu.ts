@@ -28,5 +28,6 @@ export class NavMenu {
     { path: '/pitch-tunnel', label: 'Pitch Tunnel' },
     { path: '/pitcher-stats', label: 'Pitcher Swing/Contact %' },
     { path: '/pov-tunnel', label: 'Batter POV Tunnel' },
+    { path: '/player-dashboard', label: 'Dashboard' },
   ];
 }

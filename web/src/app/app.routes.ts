@@ -3,6 +3,7 @@ import { PitchChart } from './pitch-chart/pitch-chart';
 import { PitchTunnel } from './pitch-tunnel/pitch-tunnel';
 import { PitcherStats } from './pitcher-stats/pitcher-stats';
 import { BatterPovTunnel } from './batter-pov-tunnel/batter-pov-tunnel';
+import { PlayerDashboard } from './player-dashboard/player-dashboard';
 
 export const routes: Routes = [
   // Default route (homepage)
@@ -19,6 +20,9 @@ export const routes: Routes = [
   
   // Route for the Batter POV Tunnel visualization
   { path: 'pov-tunnel', component: BatterPovTunnel },
+  
+  // Count Discipline, Decision Score, Foul Trap
+  { path: 'player-dashboard', component: PlayerDashboard },
   
   // Catch-all route for 404s (optional)
   { path: '**', redirectTo: 'pitch-chart' } 
