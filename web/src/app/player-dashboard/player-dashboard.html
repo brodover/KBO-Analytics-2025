@@ -18,6 +18,8 @@
 
     <div class="heatmap-box">
       <h3>Panic Profile (Decision by Count)</h3>
+      <p class="subtitle">Colors represent performance relative to KBO league average</p>
+      
       <div class="count-grid">
         <div class="header"></div>
         <div class="header">0S</div><div class="header">1S</div><div class="header">2S</div>
@@ -26,11 +28,25 @@
           <div class="header">{{b}}B</div>
           <div *ngFor="let s of [0, 1, 2]" 
                class="cell" 
-               [style.background-color]="getHeatmapColor(currentYearData.count_discipline[b + '-' + s])">
-            {{ currentYearData.count_discipline[b + '-' + s] || '-' }}
+               [style.background-color]="getHeatmapColor(b + '-' + s)">
+            
+            <span class="main-val">
+              {{ currentYearData.count_discipline[b + '-' + s]?.score || '-' }}
+            </span>
+            
+            <span class="sample-val" *ngIf="currentYearData.count_discipline[b + '-' + s]">
+              n={{ currentYearData.count_discipline[b + '-' + s].sample }}
+            </span>
+            
           </div>
         </ng-container>
       </div>
+      <div class="heatmap-legend">
+        <span>Panic (Worse than Avg)</span>
+        <div class="gradient-bar"></div>
+        <span>Elite (Better than Avg)</span>
+      </div>
     </div>
+
   </div>
 </div>

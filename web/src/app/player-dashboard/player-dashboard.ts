@@ -14,18 +14,27 @@ Chart.register(...registerables);
   standalone: true
 })
 export class PlayerDashboard implements OnInit {
-  @ViewChild('radarCanvas') radarCanvas!: ElementRef;
+  @ViewChild('radarCanvas') set canvas(content: ElementRef | undefined) {
+    if (content) {
+      this.radarCanvasElement = content;
+      // We use a tiny timeout to ensure the CSS has actually been applied 
+      // to the box before Chart.js tries to calculate the size.
+      setTimeout(() => {
+        this.initRadarChart();
+      }, 0);
+    }
+  }
+  private radarCanvasElement?: ElementRef;
+  radarChart: any;
 
   allData: ScoutingData | null = null;
   playerNames: string[] = [];
   selectedPlayer: string = '';
   selectedYear: string = 'Career';
   availableYears: string[] = [];
-  
-  // This resolves your TS2339 error
-  currentYearData: any = null; 
-  radarChart: any;
-constructor(private dataService: PlayerDataService) {}
+  currentYearData: any = null;
+
+  constructor(private dataService: PlayerDataService) { }
 
   ngOnInit() {
     this.dataService.getScoutingData().subscribe((data: ScoutingData) => {
@@ -40,6 +49,7 @@ constructor(private dataService: PlayerDataService) {}
     if (!this.allData) return;
     this.selectedPlayer = name;
     this.availableYears = Object.keys(this.allData[name]);
+    // Default to Career, or the first available year
     this.selectedYear = this.availableYears.includes('Career') ? 'Career' : this.availableYears[0];
     this.updateDisplay();
   }
@@ -52,52 +62,88 @@ constructor(private dataService: PlayerDataService) {}
   updateDisplay() {
     if (!this.allData) return;
     this.currentYearData = this.allData[this.selectedPlayer][this.selectedYear];
-    this.updateRadarChart();
+
+    // If the chart already exists, just update the data (smoother animation)
+    if (this.radarChart) {
+      this.updateRadarChart();
+    }
+    // If chart doesn't exist, the @ViewChild setter will handle it automatically
+  }
+
+  // Helper to get consistent data points for both init and update
+  private getRadarDataPoints() {
+    const m = this.currentYearData.metrics;
+    return [
+      m.decision_percentile || (m.decision_score * 100), // Use percentile if available
+      m.swing_rate * 100,
+      (1 - m.trap_swing_rate) * 100, // Trap Avoidance
+      m.contact_percentile || 75,     // Placeholder/Metric
+      80                              // Placeholder for Zone Awareness
+    ];
   }
 
   updateRadarChart() {
-    const metrics = this.currentYearData.metrics;
-    const dataPoints = [
-      metrics.decision_score * 100,
-      metrics.swing_rate * 100,
-      (1 - metrics.trap_swing_rate) * 100, // Trap Avoidance
-      75 // Placeholder for contact/execution
-    ];
-
     if (this.radarChart) {
-      this.radarChart.data.datasets[0].data = dataPoints;
+      this.radarChart.data.datasets[0].data = this.getRadarDataPoints();
+      this.radarChart.data.datasets[0].label = `${this.selectedPlayer} (${this.selectedYear})`;
       this.radarChart.update();
-    } else {
-      this.initRadarChart(dataPoints);
     }
   }
 
-  initRadarChart(dataPoints: number[]) {
-    setTimeout(() => {
-      this.radarChart = new Chart(this.radarCanvas.nativeElement, {
-        type: 'radar',
-        data: {
-          labels: ['Decision (Process)', 'Aggression', 'Trap Avoidance', 'Contact Skill'],
-          datasets: [{
-            label: `${this.selectedPlayer} (${this.selectedYear})`,
-            data: dataPoints,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgb(54, 162, 235)',
-            pointBackgroundColor: 'rgb(54, 162, 235)',
-          }]
-        },
-        options: {
-          scales: { r: { min: 0, max: 100, ticks: { display: false } } }
-        }
-      });
-    }, 100);
+  initRadarChart() {
+  // 1. Force a clean slate. If there is an old chart object, 
+  // it's likely connected to a dead canvas. Kill it.
+  if (this.radarChart) {
+    this.radarChart.destroy();
+    this.radarChart = null; 
   }
 
-  getHeatmapColor(score: number): string {
-    if (score === undefined || score === null) return '#333';
-    // Green for good decisions, Red for bad
-    if (score > 0.70) return '#2ecc71'; 
-    if (score > 0.45) return '#f1c40f'; 
-    return '#e74c3c';
+  if (!this.radarCanvasElement) return;
+
+  const ctx = this.radarCanvasElement.nativeElement.getContext('2d');
+  
+  // 2. Create the chart
+  this.radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Decision', 'Aggression', 'Trap Avoidance', 'Contact', 'Zone Awareness'],
+      datasets: [{
+        label: `${this.selectedPlayer} (${this.selectedYear})`,
+        data: this.getRadarDataPoints(),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgb(75, 192, 192)',
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false, // This is key for the "black box" issue
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          beginAtZero: true,
+          grid: { color: 'rgba(255, 255, 255, 0.1)' },
+          angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+          ticks: { display: true, backdropColor: 'transparent', color: '#888' },
+          pointLabels: { color: '#fff', font: { size: 12 } }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+  getHeatmapColor(countKey: string): string {
+    const countData = this.currentYearData?.count_discipline?.[countKey];
+    if (!countData || countData.sample < 5) return '#222';
+
+    const diff = countData.diff;
+    const hue = diff > 0 ? 120 : 0;
+    // Increased sensitivity (2000) to make tiny decision score gaps visible
+    const saturation = Math.min(Math.abs(diff) * 2000, 100);
+
+    return `hsl(${hue}, ${saturation}%, 40%)`;
   }
 }
