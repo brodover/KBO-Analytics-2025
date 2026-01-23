@@ -1,20 +1,28 @@
-<div>
-  <div class="controls"><label>LT Player Type:</label>
-    <div class="radio-group"><input type="radio" id="batter" value="batters" name="playerType" [(ngModel)]="playerType"
-        (change)="loadChart()"><label for="batter">Batter</label> <input type="radio" id="pitcher" value="pitchers"
-        name="playerType" [(ngModel)]="playerType" (change)="loadChart()">
-      <label for="pitcher">Pitcher</label>
+<div class="dashboard-container">
+    <div class="control-panel">
+        <div class="control-group">
+            <label>Season</label>
+            <select [(ngModel)]="selectedYear" (change)="onSelectionChange()">
+                <option *ngFor="let y of years" [value]="y">{{y}}</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Pitching Team</label>
+            <select [(ngModel)]="pitchingTeam" (change)="onSelectionChange()">
+                <option *ngFor="let t of teams" [value]="t">{{t}}</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Opponent (Batting)</label>
+            <select [(ngModel)]="battingTeam" (change)="onSelectionChange()">
+                <option *ngFor="let t of filteredBattingTeams" [value]="t">{{t}}</option>
+            </select>
+        </div>
     </div>
 
-    <label for="opponentTeam">Opponent Team: </label>
-    <select id="opponentTeam" [(ngModel)]="opponentTeam" (change)="loadChart()">
-      @for (team of opponentTeams; track team) {
-      <option [value]="team">{{ team }}</option>
-      }
-    </select>
-  </div>
+    <hr>
 
-  <div #chartContainer></div>
+    <div id="vis" class="chart-area"></div>
 </div>
-
-<div class="debug-controls"><button (click)="printCurrentVegaState()">Print Vega Filter State</button></div>
