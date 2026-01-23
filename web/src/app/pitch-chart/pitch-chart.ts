@@ -112,7 +112,7 @@ export class PitchChart implements AfterViewInit {
 
         if (!this.pitchDataSpec) return;
         
-        const container = this.el.nativeElement.querySelector('#vega-chart-container');
+        const container = this.chartContainer.nativeElement;
         if (container) {
             // 1. Inject coordinates and find data stream names
             const updatedSpec = this.injectVegaDataNames(this.pitchDataSpec);

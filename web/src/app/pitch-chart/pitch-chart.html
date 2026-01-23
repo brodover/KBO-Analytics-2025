@@ -1,4 +1,4 @@
-<div #chartContainer>
+<div>
   <div class="controls"><label>LT Player Type:</label>
     <div class="radio-group"><input type="radio" id="batter" value="batters" name="playerType" [(ngModel)]="playerType"
         (change)="loadChart()"><label for="batter">Batter</label> <input type="radio" id="pitcher" value="pitchers"
@@ -14,7 +14,7 @@
     </select>
   </div>
 
-  <div id="vega-chart-container"></div>
+  <div #chartContainer></div>
 </div>
 
 <div class="debug-controls"><button (click)="printCurrentVegaState()">Print Vega Filter State</button></div>

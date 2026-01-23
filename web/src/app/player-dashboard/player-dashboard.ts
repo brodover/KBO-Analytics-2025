@@ -45,6 +45,51 @@ export class PlayerDashboard implements OnInit {
     });
   }
 
+  initRadarChart() {
+    // 1. Force a clean slate. If there is an old chart object, 
+    // it's likely connected to a dead canvas. Kill it.
+    if (this.radarChart) {
+      this.radarChart.destroy();
+      this.radarChart = null;
+    }
+
+    if (!this.radarCanvasElement) return;
+
+    const ctx = this.radarCanvasElement.nativeElement.getContext('2d');
+
+    // 2. Create the chart
+    this.radarChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['Decision', 'Aggression', 'Trap Avoidance', 'Contact', 'Zone Awareness'],
+        datasets: [{
+          label: `${this.selectedPlayer} (${this.selectedYear})`,
+          data: this.getRadarDataPoints(),
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgb(75, 192, 192)',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            beginAtZero: true,
+            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+            ticks: { display: true, backdropColor: 'transparent', color: '#888' },
+            pointLabels: { color: '#fff', font: { size: 12 } }
+          }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
   onPlayerSelect(name: string) {
     if (!this.allData) return;
     this.selectedPlayer = name;
@@ -63,11 +108,17 @@ export class PlayerDashboard implements OnInit {
     if (!this.allData) return;
     this.currentYearData = this.allData[this.selectedPlayer][this.selectedYear];
 
-    // If the chart already exists, just update the data (smoother animation)
     if (this.radarChart) {
       this.updateRadarChart();
     }
-    // If chart doesn't exist, the @ViewChild setter will handle it automatically
+  }
+
+  updateRadarChart() {
+    if (this.radarChart) {
+      this.radarChart.data.datasets[0].data = this.getRadarDataPoints();
+      this.radarChart.data.datasets[0].label = `${this.selectedPlayer} (${this.selectedYear})`;
+      this.radarChart.update();
+    }
   }
 
   // Helper to get consistent data points for both init and update
@@ -81,59 +132,6 @@ export class PlayerDashboard implements OnInit {
       80                              // Placeholder for Zone Awareness
     ];
   }
-
-  updateRadarChart() {
-    if (this.radarChart) {
-      this.radarChart.data.datasets[0].data = this.getRadarDataPoints();
-      this.radarChart.data.datasets[0].label = `${this.selectedPlayer} (${this.selectedYear})`;
-      this.radarChart.update();
-    }
-  }
-
-  initRadarChart() {
-  // 1. Force a clean slate. If there is an old chart object, 
-  // it's likely connected to a dead canvas. Kill it.
-  if (this.radarChart) {
-    this.radarChart.destroy();
-    this.radarChart = null; 
-  }
-
-  if (!this.radarCanvasElement) return;
-
-  const ctx = this.radarCanvasElement.nativeElement.getContext('2d');
-  
-  // 2. Create the chart
-  this.radarChart = new Chart(ctx, {
-    type: 'radar',
-    data: {
-      labels: ['Decision', 'Aggression', 'Trap Avoidance', 'Contact', 'Zone Awareness'],
-      datasets: [{
-        label: `${this.selectedPlayer} (${this.selectedYear})`,
-        data: this.getRadarDataPoints(),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgb(75, 192, 192)',
-        borderWidth: 2,
-        pointBackgroundColor: 'rgb(75, 192, 192)',
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false, // This is key for the "black box" issue
-      scales: {
-        r: {
-          min: 0,
-          max: 100,
-          beginAtZero: true,
-          grid: { color: 'rgba(255, 255, 255, 0.1)' },
-          angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
-          ticks: { display: true, backdropColor: 'transparent', color: '#888' },
-          pointLabels: { color: '#fff', font: { size: 12 } }
-        }
-      },
-      plugins: { legend: { display: false } }
-    }
-  });
-}
 
   getHeatmapColor(countKey: string): string {
     const countData = this.currentYearData?.count_discipline?.[countKey];
