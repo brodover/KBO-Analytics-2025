@@ -25,6 +25,7 @@ interface NavLink {
 export class NavMenu {
   navLinks: NavLink[] = [
     { path: '/pitch-chart', label: 'Pitch Chart' },
+    { path: '/pitch-move', label: 'Pitch Movement' },
     { path: '/pitch-tunnel', label: 'Pitch Tunnel' },
     { path: '/pitcher-stats', label: 'Pitcher Swing/Contact %' },
     { path: '/pov-tunnel', label: 'Batter POV Tunnel' },

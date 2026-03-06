@@ -1,0 +1,31 @@
+<div class="page-container">
+  <div class="header">
+    <h1>Pitch Movement Profile</h1>
+    <p>Visualizing <strong>Vertical (IVB)</strong> and <strong>Horizontal</strong> break in inches.</p>
+  </div>
+
+  <div class="control-panel">
+    <div class="form-group">
+      <label>Season</label>
+      <select [(ngModel)]="selectedYear" (change)="onFilterChange()">
+        <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Team</label>
+      <select [(ngModel)]="selectedTeam" (change)="onFilterChange()">
+        <option *ngFor="let team of teams" [value]="team.code">{{ team.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="chart-wrapper">
+    <div #chartContainer class="chart-container"></div>
+  </div>
+
+  <div class="info-footer">
+    <p><strong>How to read:</strong> (0,0) represents a "gyro" ball with no movement. 
+       Positive Y is <em>Induced Rise</em>. Positive X is <em>Arm-side Run</em> (for RHP).</p>
+  </div>
+</div>

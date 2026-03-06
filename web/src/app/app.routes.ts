@@ -4,6 +4,7 @@ import { PitchTunnel } from './pitch-tunnel/pitch-tunnel';
 import { PitcherStats } from './pitcher-stats/pitcher-stats';
 import { BatterPovTunnel } from './batter-pov-tunnel/batter-pov-tunnel';
 import { PlayerDashboard } from './player-dashboard/player-dashboard';
+import { PitchMove } from './pitch-move/pitch-move';
 
 export const routes: Routes = [
   // Default route (homepage)
@@ -12,6 +13,9 @@ export const routes: Routes = [
   // Route for the Pitch Chart
   { path: 'pitch-chart', component: PitchChart }, 
   
+  // Route for the Pitch Movement
+  { path: 'pitch-move', component: PitchMove }, 
+
   // Route for the Pitch Tunnel visualization
   { path: 'pitch-tunnel', component: PitchTunnel },
   
